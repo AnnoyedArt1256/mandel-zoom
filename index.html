@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="480" height="480" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+
+<script>
+c = document.getElementById("myCanvas");
+ctx = c.getContext("2d");
+cx = 0; cy = 0; chx = 0; chy = 0;
+zoom = 4;
+
+document.addEventListener("DOMMouseScroll", function (e) {
+ detail = e.detail
+ zoom = zoom * (detail > 0 ? 0.9 : 1.1)
+});
+document.addEventListener("mousemove", function (e) {
+    if (e.buttons==1) {
+     chx = (e.movementX*32)/480
+     chy = (e.movementY*32)/480
+     cx += (chx/64)*zoom
+     cy += (chy/64)*zoom
+    } else {
+     chx = chy = 0;
+    }
+});
+function convertColor(IT, time){
+  return (128-(Math.asin(Math.cos(Math.sqrt(IT)+Math.PI*(time%1000)/500*(IT>0)))/Math.PI*255))|0;
+}
+width = 256
+imageData = ctx.createImageData(480, 480);
+t=128
+setInterval(_=>{
+for (i=0;i<480;i++) {
+    for (j=0;j<480;j++) {
+          ind = ((i*480)+j)*4
+          ax = cx+zoom*(j-480/2)/480
+          ay = cy+zoom*(i-480/2)/480
+          zx = ax; zy = ay;
+          for (m=0;m<64;m++) {
+            temp = zy;
+            zy = 2*zx*zy+ay
+            zx = zx*zx-temp*temp+ax
+            if (zx*zx+zy*zy > 4) break;
+          }
+          m = convertColor((m/2)+1,t)
+          imageData.data[ind + 0] = m;
+          imageData.data[ind + 1] = m;
+          imageData.data[ind + 2] = m;
+          imageData.data[ind + 3] = 255;
+    }
+}
+ctx.putImageData(imageData, 0, 0);
+},10);
+</script>
+
+</body>
+</html>
