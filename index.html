@@ -20,8 +20,8 @@ document.addEventListener("mousemove", function (e) {
     if (e.buttons==1) {
      chx = (e.movementX*32)/480
      chy = (e.movementY*32)/480
-     cx += (chx/64)*zoom
-     cy += (chy/64)*zoom
+     cx -= (chx/64)*zoom
+     cy -= (chy/64)*zoom
     } else {
      chx = chy = 0;
     }
